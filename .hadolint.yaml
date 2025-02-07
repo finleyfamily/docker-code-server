@@ -1,0 +1,4 @@
+ignored:
+  - DL3008  # Specify version with `apt-get install -y <package>-<version>`
+  - DL3013  # Pin versions in pip.
+  - SC1091  # Not following: File not included in mock.

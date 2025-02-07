@@ -1,0 +1,12 @@
+**/.DS_Store
+**/.cache
+**/.envrc
+**/.git
+**/.gitattributes
+**/.gitignore
+**/.gitkeep
+**/.secrets
+**/.venv
+**/.vscode
+**/Makefile
+**/node_modules

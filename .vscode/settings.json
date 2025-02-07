@@ -1,0 +1,17 @@
+{
+    "cSpell.enabled": true,
+    "docker.languageserver.formatter.ignoreMultilineInstructions": true,
+    "editor.rulers": [
+        81,
+        88,
+        100
+    ],
+    "editor.tabSize": 4,
+    "files.associations": {
+        "**/s6-overlay/**/finish": "shellscript",
+        "**/s6-overlay/**/run": "shellscript",
+        "**/s6-overlay/**/up": "shellscript",
+        "**/usr/bin/**/*": "shellscript"
+    },
+    "files.insertFinalNewline": true
+}

@@ -1,0 +1,73 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "github>finleyfamily/renovate",
+        "customManagers:dockerfileVersions"
+    ],
+    "packageRules": [
+        {
+            "automerge": true,
+            "automergeType": "pr",
+            "matchManagers": [
+                "pip_requirements"
+            ],
+            "platformAutomerge": true,
+            "rangeStrategy": "bump"
+        },
+        {
+            "addLabels": [
+                "changelog:major"
+            ],
+            "automerge": false,
+            "description": "trigger major updates",
+            "enabled": true,
+            "matchFileNames": [
+                "Dockerfile",
+                "Dockerfile.*",
+                "**/rootfs/tmp/requirements.txt",
+                "**/rootfs/tmp/*.requirements.txt"
+            ],
+            "matchUpdateTypes": [
+                "major"
+            ]
+        },
+        {
+            "addLabels": [
+                "changelog:minor"
+            ],
+            "automerge": true,
+            "description": "trigger minor updates (dockerfile)",
+            "enabled": true,
+            "matchFileNames": [
+                "Dockerfile",
+                "Dockerfile.*",
+                "**/rootfs/tmp/requirements.txt",
+                "**/rootfs/tmp/*.requirements.txt"
+            ],
+            "matchUpdateTypes": [
+                "minor"
+            ]
+        },
+        {
+            "addLabels": [
+                "changelog:patch"
+            ],
+            "automerge": true,
+            "description": "trigger patch updates (dockerfile)",
+            "enabled": true,
+            "matchFileNames": [
+                "Dockerfile",
+                "Dockerfile.*",
+                "**/rootfs/tmp/requirements.txt",
+                "**/rootfs/tmp/*.requirements.txt"
+            ],
+            "matchUpdateTypes": [
+                "digest",
+                "patch"
+            ]
+        }
+    ],
+    "reviewers": [
+        "ITProKyle"
+    ]
+}

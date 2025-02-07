@@ -1,0 +1,18 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+      - release/**
+
+jobs:
+  docker-lint:
+    uses: finleyfamily/workflows/.github/workflows/docker.lint.yml@master
+  docker-build:
+    needs:
+      - docker-lint
+    uses: finleyfamily/workflows/.github/workflows/docker.build.yml@master
+  spellcheck:
+    uses: finleyfamily/workflows/.github/workflows/spellcheck.yml@master
