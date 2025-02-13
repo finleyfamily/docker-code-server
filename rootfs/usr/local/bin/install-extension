@@ -1,0 +1,3 @@
+#! /usr/bin/env bash
+
+exec /app/code-server/bin/code-server --config /config/config.yaml --install-extension "${@}";

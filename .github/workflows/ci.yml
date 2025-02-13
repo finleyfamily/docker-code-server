@@ -13,6 +13,10 @@ jobs:
   docker-build:
     needs:
       - docker-lint
+    permissions:
+      pull-requests: read
     uses: finleyfamily/workflows/.github/workflows/docker.build.yml@master
+    with:
+      push-image: false
   spellcheck:
     uses: finleyfamily/workflows/.github/workflows/spellcheck.yml@master

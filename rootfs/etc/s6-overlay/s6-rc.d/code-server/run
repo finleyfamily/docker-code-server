@@ -1,0 +1,17 @@
+#! /usr/bin/with-contenv oi
+# shellcheck shell=bash
+# ==============================================================================
+# Run code-server
+# ==============================================================================
+readonly config_file="/config/config.yaml";
+readonly port="80";
+
+oi::log.info 'Starting code-server...'
+
+exec s6-setuidgid root \
+  /app/code-server/bin/code-server \
+    --bind-addr "127.0.0.1:${port}" \
+    --config "${config_file}" \
+    --host '0.0.0.0' \
+    --port ${port} \
+    "${DEFAULT_WORKSPACE:-/config/workspaces}";

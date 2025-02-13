@@ -1,0 +1,29 @@
+#! /usr/bin/with-contenv oi
+# shellcheck shell=bash
+# ==============================================================================
+# Sets up code-server.
+# ==============================================================================
+
+mkdir -p /config/{.code-server,.code-server-extensions,workspaces};
+
+# copy default code-server config to `/config/config.yaml`
+if ! oi::fs.file_exists /config/config.yaml; then
+  cp /root/.config/code-server/config.yaml /config/config.yaml \
+    || oi::exit.error "Could not create '/config/config.yaml'";
+fi
+
+# sets up default machine settings on first start.
+if ! oi::fs.file_exists '/config/.code-server/Machine/settings.json'; then
+  mkdir -p /config/.code-server/Machine \
+    || oi::exit.error "Could not create persistent storage folder.";
+
+  cp /root/.code-server/settings.json /config/.code-server/Machine/settings.json;
+fi
+
+# sets up default user settings on first start.
+if ! oi::fs.file_exists '/config/.code-server/User/settings.json'; then
+  mkdir -p /config/.code-server/User \
+    || oi::exit.error "Could not create persistent storage folder.";
+
+  cp /root/.code-server/settings.json /config/.code-server/User/settings.json;
+fi
