@@ -1,0 +1,64 @@
+#! /usr/bin/with-contenv oi
+# shellcheck shell=bash
+# ==============================================================================
+# Configures the SSH daemon
+# ==============================================================================
+readonly SSH_AUTHORIZED_KEYS_PATH=/etc/ssh/authorized_keys;
+readonly SSH_CONFIG_PATH=/etc/ssh/sshd_config;
+readonly SSH_HOST_ED25519_KEY=/config/ssh_host_ed25519_key;
+readonly SSH_HOST_RSA_KEY=/config/ssh_host_rsa_key;
+declare username;
+
+# Generate host keys
+if ! oi::fs.file_exists "${SSH_HOST_RSA_KEY}"; then
+  oi::log.notice 'RSA host key missing, generating one...';
+
+  ssh-keygen -t rsa -f "${SSH_HOST_RSA_KEY}" -N "" \
+  || oi::exit.error 'Failed to generate RSA host key';
+fi
+
+if ! oi::fs.file_exists "${SSH_HOST_ED25519_KEY}"; then
+  oi::log.notice 'ED25519 host key missing, generating one...';
+  ssh-keygen -t ed25519 -f "${SSH_HOST_ED25519_KEY}" -N "" \
+    || oi::exit.error 'Failed to generate ED25519 host key';
+fi
+
+username=${_USER:-admin};
+
+# Create user account if the user isn't root
+if [[ "${username}" != "root" ]]; then
+  # Ensure new user switches to root after login
+  if ! oi::fs.file_exists "/home/${username}/.profile"; then
+    if ! oi::fs.directory_exists "/home/${username}"; then
+      mkdir -p "/home/${username}" \
+        || oi::exit.error "Unable to create directory '/home/${username}'";
+      chown -R "${username}:${username}" "/home/${username}" \
+        || oi::exit.error "Unable to set permissions for directory '/home/${username}'";
+    fi
+    touch "/home/${username}/.profile" \
+      || oi::exit.error "Unable to create .profile for ${username}";
+    chown "${username}:${username}" "/home/${username}/.profile" \
+      || oi::exit.error "Unable to set permissions for '/home/${username}/.profile'";
+  fi
+
+  echo 'exec sudo -i' > "/home/${username}/.profile" \
+    || oi::exit.error 'Failed configuring user profile';
+fi
+
+# Sets up the authorized SSH keys
+chmod 644 "${SSH_AUTHORIZED_KEYS_PATH}";
+if oi::fs.file_exists '/config/.ssh/authorized_keys'; then
+  while read -r key; do
+    echo "${key}" >> "${SSH_AUTHORIZED_KEYS_PATH}";
+  done <<< "$(cat '/config/.ssh/authorized_keys')"
+fi
+
+# SFTP access
+sed -i '/Subsystem sftp/s/^#//g' "${SSH_CONFIG_PATH}";
+oi::log.notice 'SFTP access is enabled';
+
+# Allow specified user to log in
+if [[ "${username}" != "root" ]]; then
+  sed -i "s/AllowUsers\\ .*/AllowUsers\\ root\\ ${username}/" "${SSH_CONFIG_PATH}" \
+    || oi::exit.error 'Failed opening SSH for the configured user';
+fi

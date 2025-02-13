@@ -14,5 +14,7 @@ jobs:
     needs:
       - docker-lint
     uses: finleyfamily/workflows/.github/workflows/docker.build.yml@master
+    with:
+      push-image: false
   spellcheck:
     uses: finleyfamily/workflows/.github/workflows/spellcheck.yml@master

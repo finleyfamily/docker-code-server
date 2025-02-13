@@ -1,0 +1,57 @@
+#! /usr/bin/with-contenv oi
+# shellcheck shell=bash
+# ==============================================================================
+# Persists user settings and installs custom user packages.
+# ==============================================================================
+readonly SSH_USER_PATH="/config/.ssh";
+readonly ZSH_HISTORY_FILE="/root/.zsh_history";
+readonly ZSH_HISTORY_PERSISTANT_FILE="/config/.zsh_history";
+
+function set-ssh-permissions() {
+  # Set permissions in `.ssh` directory.
+  local ssh_dir="${1:-$SSH_USER_PATH}";
+  local __user;
+
+  __user="$(whoami)";
+
+  lsiown "${__user}:${__user}" "${ssh_dir}" \
+    || oi::exit.error "Failed to change ownership of directory '${ssh_dir}'";
+
+  chmod 700 "${ssh_dir}" \
+    || oi::exit.error "Failed setting permissions for directory '${ssh_dir}'";
+
+  if [[ -n "$(ls -A /config/.ssh)" ]]; then
+    find "${ssh_dir}/" -type d -exec chmod 700 '{}' \;
+    find "${ssh_dir}/" -type f -exec chmod 600 '{}' \; \
+      || oi::exit.error "Failed setting permissions for private keys in '${ssh_dir}'";
+    find "${ssh_dir}/" -type f -iname '*.pub' -exec chmod 644 '{}' \; \
+      || oi::exit.error "Failed setting permissions for public keys in '${ssh_dir}'";
+
+    if oi::fs.file_exists "${ssh_dir}/authorized_keys"; then
+      chmod 644 "${ssh_dir}/authorized_keys" \
+        || oi::exit.error "Failed setting permissions for 'authorized_keys' in '${ssh_dir}'";
+    fi
+  fi
+};
+
+# Store SSH settings in config directory
+if ! oi::fs.directory_exists "${SSH_USER_PATH}"; then
+  mkdir -p "${SSH_USER_PATH}" \
+    || oi::exit.error "Failed to create directory '${SSH_USER_PATH}'";
+fi
+
+ln -s "${SSH_USER_PATH}" ~/.ssh;
+set-ssh-permissions "${SSH_USER_PATH}";
+
+# Sets up ZSH shell
+if ! oi::fs.file_exists "${ZSH_HISTORY_PERSISTANT_FILE}"; then
+  touch "${ZSH_HISTORY_PERSISTANT_FILE}" \
+    || oi::exit.error 'Failed creating a persistent ZSH history file';
+fi
+
+chmod 600 "$ZSH_HISTORY_PERSISTANT_FILE" \
+  || oi::exit.error \
+      'Failed setting the correct permissions to the ZSH history file';
+
+ln -s -f "$ZSH_HISTORY_PERSISTANT_FILE" "$ZSH_HISTORY_FILE" \
+  || oi::exit.error 'Failed linking the persistant ZSH history file';

@@ -1,0 +1,29 @@
+name: docker-code-server
+
+services:
+  svc:
+    image: ghcr.io/finleyfamily/docker-code-server:local
+    # container_name: docker-code-server
+    environment:
+      CHEZMOI_REPO: ITProKyle
+    labels:
+      org.opencontainers.container.description: docker-code-server development container.
+    ports:
+      - 9022:22
+      - 9080:80
+    volumes:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        type: bind
+      - source: $PWD/tmp/config
+        target: /config
+        type: bind
+      - source: $PWD/tmp/data  # optional
+        target: /data
+        type: bind
+      - source: $PWD/tmp/defaults  # optional
+        target: /defaults
+        type: bind
+      - source: $HOME/.docker/config.json  # optional
+        target: /root/.docker/config.json
+        type: bind

@@ -1,0 +1,21 @@
+# abs-proxy-base-path:
+# app-name:
+auth: none
+# cert-host:
+# cert-key:
+# cert:
+# disable-file-downloads:
+# disable-file-uploads:
+# disable-getting-started-override:
+# disable-proxy:
+disable-telemetry: true
+disable-update-check: true
+disable-workspace-trust: true
+extensions-dir: /config/.code-server-extensions  # recommended to leave as-is
+# github-auth:  # recommended to use `GITHUB_TOKEN` environment variable instead
+# hashed-password:
+# password:
+# proxy-domain:
+# trusted-origins:
+user-data-dir: /config/.code-server  # recommended to leave as-is
+# welcome-text:

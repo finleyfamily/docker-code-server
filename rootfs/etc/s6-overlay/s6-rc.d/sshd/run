@@ -1,0 +1,30 @@
+#! /usr/bin/with-contenv oi
+# shellcheck shell=bash
+# ==============================================================================
+# Starts the SSH service
+# ==============================================================================
+declare -a sshd_options
+
+function check_privsep_dir() {
+  # Create the PrivSep empty dir if necessary
+  if [ ! -d '/run/sshd' ]; then
+    mkdir '/run/sshd';
+    chmod 0755 '/run/sshd';
+  fi
+}
+
+check_privsep_dir;
+
+oi::log.info 'Starting the SSH daemon...';
+
+# Default options
+sshd_options+=(-D);
+sshd_options+=(-e);
+
+# Enable debug mode on the SSH daemon
+if oi::debug; then
+  sshd_options+=(-d);
+fi
+
+# Start the SSH daemon
+exec /usr/sbin/sshd "${sshd_options[@]}" < /dev/null;
