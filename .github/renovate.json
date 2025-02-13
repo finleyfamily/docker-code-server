@@ -4,6 +4,9 @@
         "github>finleyfamily/renovate",
         "customManagers:dockerfileVersions"
     ],
+    "ignorePaths": [
+        "docker-compose.yml"
+    ],
     "packageRules": [
         {
             "automerge": true,
