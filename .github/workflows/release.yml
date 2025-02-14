@@ -7,4 +7,6 @@ on:
 
 jobs:
   docker:
+    permissions:
+      pull-requests: read
     uses: finleyfamily/workflows/.github/workflows/docker.build.yml@master
