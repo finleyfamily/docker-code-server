@@ -1,4 +1,4 @@
-FROM ghcr.io/finleyfamily/docker-base-debian:v0.4.1@sha256:5964e47970c8b9b17789e4f6bce49622e435e5426077c231da60b1a2b563cce0
+FROM ghcr.io/finleyfamily/docker-base-debian:v0.5.0@sha256:32c6f1d5b48f1ce4574d3a3f683516cdae9ba21bf1c53d7fc0a345226015c9d8
 
 ###############################################################################
 # Image Arguments                                                             #
