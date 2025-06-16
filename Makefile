@@ -26,7 +26,7 @@ docker.down: ## stop containers
 docker.open: ## open the local code-server instance with the default web browser
 	@open http://127.0.0.1:9080
 
-docker.up: docker.build setup-dirs ## start container
+docker.up: docker.build setup.dirs ## start container
 	@docker compose up --detach --force-recreate
 
 docker.zsh: ## connect to container with zsh shell
@@ -34,7 +34,7 @@ docker.zsh: ## connect to container with zsh shell
 
 fix: run.pre-commit ## run all automatic fixes
 
-fix-md: ## automatically fix markdown format errors
+fix.md: ## automatically fix markdown format errors
 	@poetry run pre-commit run mdformat --all-files
 
 lint: ## run all linters
@@ -75,19 +75,19 @@ run.pre-commit: ## run pre-commit for all files
 		--all-files \
 		--color always
 
-setup: setup-poetry setup-pre-commit setup-npm ## setup dev environment
+setup: setup.poetry setup.pre-commit setup.npm ## setup dev environment
 
-setup-dirs: ## create temp directories for testing locally
+setup.dirs: ## create temp directories for testing locally
 	@mkdir -p ./tmp/{app,config,data,defaults};
 	@mkdir -p ./tmp/config/{.code-server,.code-server-extensions,workspaces}
 
-setup-npm: ## install node dependencies with npm
+setup.npm: ## install node dependencies with npm
 	@npm ci
 
-setup-poetry: ## setup python virtual environment
+setup.poetry: ## setup python virtual environment
 	@poetry sync $(POETRY_OPTS)
 
-setup-pre-commit: ## install pre-commit git hooks
+setup.pre-commit: ## install pre-commit git hooks
 	@poetry run pre-commit install
 
 spellcheck: ## run cspell
