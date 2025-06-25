@@ -8,7 +8,7 @@ FROM ghcr.io/finleyfamily/docker-base-debian:v0.7.0@sha256:b6675bcb13e82639f389d
 #
 # https://github.com/coder/code-server
 # renovate: datasource=github-releases depName=coder/code-server versioning=loose
-ARG CODE_SERVER_VERSION="4.101.1"
+ARG CODE_SERVER_VERSION="4.101.2"
 ARG TARGETARCH
 
 ###############################################################################
