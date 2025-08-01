@@ -8,7 +8,7 @@ FROM ghcr.io/finleyfamily/docker-base-debian:v0.7.2@sha256:8e515db38cd7fce0eae12
 #
 # https://github.com/coder/code-server
 # renovate: datasource=github-releases depName=coder/code-server versioning=loose
-ARG CODE_SERVER_VERSION="4.102.3"
+ARG CODE_SERVER_VERSION="v4.102.3"
 ARG TARGETARCH
 
 ###############################################################################
@@ -36,6 +36,7 @@ RUN set -ex; \
   fi; \
   curl -J -L -o /tmp/code.tar.gz \
     "https://github.com/coder/code-server/releases/download/${CODE_SERVER_VERSION}/code-server-${CODE_SERVER_VERSION#v}-linux-${ARCH}.tar.gz"; \
+  ls -l --block-size=M /tmp/code.tar.gz; \
   mkdir -p /app/code-server; \
   tar zxf /tmp/code.tar.gz --strip-components 1 -C /app/code-server; \
   ln -s /app/code-server/bin/code-server /usr/local/bin/code-server; \
@@ -52,6 +53,8 @@ RUN set -ex; \
   echo "**** performing cleanup ****"; \
   apt-get clean; \
   rm -rf /var/lib/apt/lists/*;
+# https://github.com/coder/code-server/releases/download/v4.102.3/code-server-4.102.3-linux-arm64.tar.gz
+# https://github.com/coder/code-server/releases/download/4.102.3/code-server-4.102.3-linux-arm64.tar.gz
 
 COPY rootfs/ /
 

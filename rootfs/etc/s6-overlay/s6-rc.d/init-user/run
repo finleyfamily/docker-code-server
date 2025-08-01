@@ -7,7 +7,30 @@ readonly SSH_USER_PATH="/config/.ssh";
 readonly ZSH_HISTORY_FILE="/root/.zsh_history";
 readonly ZSH_HISTORY_PERSISTANT_FILE="/config/.zsh_history";
 
-function set-ssh-permissions() {
+function create::ssh-symlink {
+  # Creates a symlink to the SSH directory in the user's home directory.
+
+  if oi::fs.directory_exists "${HOME}/.ssh"; then
+    if [[ -L "${HOME}/.ssh" ]]; then
+      oi::log.info "SSH directory is already symlinked.";
+      return 0;
+    else
+      oi::log.warning "SSH directory exists but is not a symlink!";
+      oi::log.info "Copying contents of ${HOME}/.ssh to ${SSH_USER_PATH}...";
+      mkdir -p "${SSH_USER_PATH}" \
+        || oi::exit.error "Failed to create directory '${SSH_USER_PATH}'";
+      cp -r "${HOME}/.ssh/"* "${SSH_USER_PATH}/";
+      oi::log.info "Removing existing ${HOME}/.ssh directory...";
+      rm -rf "${HOME}/.ssh" \
+        || oi::exit.error "Failed to remove existing ${HOME}/.ssh directory";
+    fi
+  fi
+
+  ln -s "${SSH_USER_PATH}" "${HOME}" \
+    || oi::exit.error "Failed to create symlink for SSH directory";
+}
+
+function update::ssh-permissions() {
   # Set permissions in `.ssh` directory.
   local ssh_dir="${1:-$SSH_USER_PATH}";
   local __user;
@@ -40,8 +63,8 @@ if ! oi::fs.directory_exists "${SSH_USER_PATH}"; then
     || oi::exit.error "Failed to create directory '${SSH_USER_PATH}'";
 fi
 
-ln -s "${SSH_USER_PATH}" ~/.ssh;
-set-ssh-permissions "${SSH_USER_PATH}";
+create::ssh-symlink;
+update::ssh-permissions "${SSH_USER_PATH}";
 
 # Sets up ZSH shell
 if ! oi::fs.file_exists "${ZSH_HISTORY_PERSISTANT_FILE}"; then
